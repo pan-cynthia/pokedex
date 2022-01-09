@@ -1,0 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Exo', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  background: white;
+  width: 100%;
+}
+
+.header img {
+  width: 60px;
+}
+
+.pokemon-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pokemon-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 5px;
+  width: 150px;
+  border-radius: 10px;
+}
+
+.img-container {
+  background: white;
+  border-radius: 50%;
+  width: 80px;
+  padding: 10px;
+  margin: 15px 0;
+}
+
+.pokemon-card img {
+  width: 100%;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+.id {
+  background: rgba(255, 255, 255, 0.9);
+  width: 50px;
+  text-align: center;
+  border-radius: 15px;
+  margin: 5px;
+}
+
+.name {
+  margin: 5px;
+}
+
+.type {
+  margin-bottom: 15px;
+}
