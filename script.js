@@ -48,14 +48,22 @@ const backgroundColors = {
 }
 
 // set background color of pokemon card to the color of its type
-function setBackground(types, pokemonCard) {
+function setBackground(types, pokemonCard, opacity = false) {
   if (types[1] === undefined) {
     // pokemon only has primary type
-    pokemonCard.style.background = backgroundColors[types[0].type.name];
+    if (opacity === true) {
+      pokemonCard.style.background = colors[types[0].type.name];
+    } else {
+      pokemonCard.style.background = backgroundColors[types[0].type.name];
+    }
   } else {
     // pokemon has a secondary type
     // use both type colors in background of pokemon card
-    pokemonCard.style.background = `linear-gradient(to right, ${backgroundColors[types[0].type.name]}, ${backgroundColors[types[1].type.name]})`;
+    if (opacity === true) {
+      pokemonCard.style.background = `linear-gradient(to right, ${colors[types[0].type.name]}, ${colors[types[1].type.name]})`;
+    } else {
+      pokemonCard.style.background = `linear-gradient(to right, ${backgroundColors[types[0].type.name]}, ${backgroundColors[types[1].type.name]})`;
+    }
   }
 }
 
@@ -143,15 +151,92 @@ const fetchPokemon = async () => {
   }
 }
 
+const getEvolutionChain = async id => {
+  // get url of evolution chain for api call
+  let url = `https://pokeapi.co/api/v2/pokemon-species/${id}`;
+  let response = await fetch(url);
+  let data = await response.json();
+
+  // get evolution chain data
+  url = data.evolution_chain.url;
+  response = await fetch(url);
+  data = await response.json();
+
+  let evolutionChain = [];
+  let evolutionData = data.chain;
+
+  do {
+    let numberOfEvolutions = evolutionData.evolves_to.length;  
+
+    evolutionChain.push({
+      "species_name": evolutionData.species.name,
+    });
+
+    if(numberOfEvolutions > 1) {
+      for (let i = 1; i < numberOfEvolutions; ++i) { 
+        evolutionChain.push({
+          "species_name": evolutionData.evolves_to[i].species.name,
+      });
+      }
+    }        
+
+    evolutionData = evolutionData.evolves_to[0];
+
+  } while (evolutionData != undefined && evolutionData.hasOwnProperty('evolves_to'));
+
+  console.log(evolutionChain);
+
+  // set evolutions
+  if (evolutionChain.length === 1) {
+    // no evolutions, reset
+    document.getElementById('evolutions-header').textContent = '';
+      document.getElementById('evolution-1-name').textContent = '';
+      document.getElementById('evolution-2-name').textContent = '';
+      document.getElementById('evolution-3-name').textContent = '';
+      document.getElementById(`evolution-1-img`).src = '#';
+      document.getElementById(`evolution-2-img`).src = '#';
+      document.getElementById(`evolution-3-img`).src = '';
+      document.getElementsByClassName('fas')[0].style.display = 'none';
+      document.getElementsByClassName('fas')[1].style.display = 'none';
+  } else {
+    // at least one evolution
+    document.getElementById('evolutions-header').textContent = 'Evolutions';
+    for (let j = 0; j < evolutionChain.length; ++j) {
+      document.getElementById(`evolution-${j+1}-name`).textContent = evolutionChain[j].species_name;
+
+      const url = `http://pokeapi.co/api/v2/pokemon/${evolutionChain[j].species_name}`;
+      const response = await fetch(url);
+      const pokemon = await response.json();
+      document.getElementById(`evolution-${j+1}-img`).src = pokemon.sprites.front_default;
+    }
+  }
+}
+
 fetchPokemon();
 
 let modal = document.getElementById('modal');
 
 function displayInfo(pokemon) {
-  console.log("entered display info");
   modal.style.display = 'block';
+  
+  // disable scroll when modal is open
   document.body.style.overflow = "hidden";
   document.body.style.height = "100%";
+
+  document.getElementById('popup-image').src = pokemon.sprites.front_default;
+  document.getElementById('popup-name').textContent = pokemon.name;
+  document.getElementById('popup-id').textContent = (pokemon.id < 10) ? '00' + pokemon.id : (pokemon.id < 100) ? '0' + pokemon.id : pokemon.id;
+  document.getElementById('hp').textContent = pokemon.stats[0].base_stat;
+  document.getElementById('attack').textContent = pokemon.stats[1].base_stat;
+  document.getElementById('defense').textContent = pokemon.stats[2].base_stat;
+  document.getElementById('special-attack').textContent = pokemon.stats[3].base_stat;
+  document.getElementById('special-defense').textContent = pokemon.stats[4].base_stat;
+  document.getElementById('speed').textContent = pokemon.stats[5].base_stat;
+  document.getElementById('height').textContent = (pokemon.height/10).toFixed(1);
+  document.getElementById('weight').textContent = (pokemon.weight/10).toFixed(1);
+  
+  setBackground(pokemon.types, popup, true);
+  getEvolutionChain(pokemon.id);
 }
 
 function closePopup() {
