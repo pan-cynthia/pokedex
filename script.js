@@ -24,7 +24,7 @@ const colors = {
   unknown: '#68A090'
 };
 
-// background colors
+// background colors, less opaque
 const backgroundColors = {
   normal: 'rgba(168, 168, 120, 0.7)',
   fighting: 'rgba(192, 48, 40, 0.7)',
@@ -78,50 +78,39 @@ const createPokemonCard = (pokemon) => {
   const pokemonCard = document.createElement('div');
   pokemonCard.classList.add('pokemon-card');  
 
-  if (types[1] !== undefined) {
-    // pokemon has a secondary type
-    pokemonCard.innerHTML = `
-    <div class="img-container">
-      <img src=${sprites.front_default} alt=${name}>
+  pokemonCard.innerHTML = `
+  <div class="img-container">
+    <img src=${sprites.front_default} alt=${name}>
+  </div>
+  <div class="info">
+    <span class="id">${id}</span>
+    <h3 class="name">${name}</h3>
+    <div class="type">
+      <span class="primary-type">${types[0].type.name}</span>
+      <span class="secondary-type" style="display: none"></span>
     </div>
-    <div class="info">
-      <span class="id">${id}</span>
-      <h3 class="name">${name}</h3>
-      <div class="type">
-        <span class="primary-type">${types[0].type.name}</span>
-        <span class="secondary-type">${types[1].type.name}</span>
-      </div>
-    </div>
-    `;
-  } else {
-    // pokemon only has a primary type
-    pokemonCard.innerHTML = `
-    <div class="img-container">
-      <img src=${sprites.front_default} alt=${name}>
-    </div>
-    <div class="info">
-      <span class="id">${id}</span>
-      <h3 class="name">${name}</h3>
-      <div class="type">
-        <span class="primary-type">${types[0].type.name}</span>
-      </div>
-    </div>
-    `;
-  }
+  </div>
+  `;
+
+  // set background color of the pokemon card
   setBackground(pokemon.types, pokemonCard);
 
-  // add the new element into the pokemon container element
+  // add the pokemon card into the pokemon container element
   pokedex.appendChild(pokemonCard);
 
   // set background colors of types
   let primaryTypes = document.getElementsByClassName('primary-type');
+  let secondaryTypes = document.getElementsByClassName('secondary-type');
+
   primaryTypes[primaryTypes.length - 1].style.background = colors[types[0].type.name];
   if (types[1] !== undefined) {
-    let secondaryTypes = document.getElementsByClassName('secondary-type');
+    // pokemon has a secondary type
+    secondaryTypes[secondaryTypes.length - 1].textContent = `${types[1].type.name}`;
+    secondaryTypes[secondaryTypes.length - 1].style.display = 'block';
     secondaryTypes[secondaryTypes.length - 1].style.background = colors[types[1].type.name];
   }
 
-  // if user clicks on a specific pokemon card, display popup with more info
+  // if user clicks on a specific pokemon card, display a popup with more info
   pokemonCard.addEventListener('click', () => {
     displayInfo(pokemon);
   })
@@ -129,16 +118,22 @@ const createPokemonCard = (pokemon) => {
   // hover effects
   pokemonCard.addEventListener('mouseover', () => {
     pokemonCard.style.background = '#dbdbdb';
+    primaryTypes[id - 1].style.background = '#FFFFFF';
+    secondaryTypes[id - 1].style.background = '#FFFFFF';
   })
 
   pokemonCard.addEventListener('mouseout', () => {
     setBackground(pokemon.types, pokemonCard);
+    primaryTypes[id - 1].style.background = colors[types[0].type.name];
+    if (types[1] !== undefined) {
+      secondaryTypes[id - 1].style.background = colors[types[1].type.name];
+    }
   })
 }
 
 // makes an api call to get a single pokemon using its id number
 const getPokemon = async id => {
-  const url = `http://pokeapi.co/api/v2/pokemon/${id}`;
+  const url = `http://pokeapi.co/api/v2/pokemon/${id}/`;
   const response = await fetch(url);
   const pokemon = await response.json();
   createPokemonCard(pokemon);
@@ -153,7 +148,7 @@ const fetchPokemon = async () => {
 
 const getEvolutionChain = async id => {
   // get url of evolution chain for api call
-  let url = `https://pokeapi.co/api/v2/pokemon-species/${id}`;
+  let url = `https://pokeapi.co/api/v2/pokemon-species/${id}/`;
   let response = await fetch(url);
   let data = await response.json();
 
@@ -204,7 +199,7 @@ const getEvolutionChain = async id => {
     for (let j = 0; j < evolutionChain.length; ++j) {
       document.getElementById(`evolution-${j+1}-name`).textContent = evolutionChain[j].species_name;
 
-      const url = `http://pokeapi.co/api/v2/pokemon/${evolutionChain[j].species_name}`;
+      const url = `http://pokeapi.co/api/v2/pokemon/${evolutionChain[j].species_name}/`;
       const response = await fetch(url);
       const pokemon = await response.json();
       document.getElementById(`evolution-${j+1}-img`).src = pokemon.sprites.front_default;
@@ -223,20 +218,48 @@ function displayInfo(pokemon) {
   document.body.style.overflow = "hidden";
   document.body.style.height = "100%";
 
-  document.getElementById('popup-image').src = pokemon.sprites.front_default;
-  document.getElementById('popup-name').textContent = pokemon.name;
-  document.getElementById('popup-id').textContent = (pokemon.id < 10) ? '00' + pokemon.id : (pokemon.id < 100) ? '0' + pokemon.id : pokemon.id;
+  // default information displayed is the about section
+  document.getElementsByClassName('about')[0].style.display = 'block';
+  document.getElementsByClassName('stats')[0].style.display = 'none';
+  document.getElementsByClassName('evolutions')[0].style.display = 'none';
+
+  // basic info
+  document.getElementById('name').textContent = pokemon.name;
+  document.getElementById('id').textContent = (pokemon.id < 10) ? '00' + pokemon.id : (pokemon.id < 100) ? '0' + pokemon.id : pokemon.id;
+  document.getElementById('image').src = pokemon.sprites.front_default;
+
+  // about
+  document.getElementById('height').textContent = (pokemon.height/10).toFixed(1);
+  document.getElementById('weight').textContent = (pokemon.weight/10).toFixed(1);
+
+  // stats
   document.getElementById('hp').textContent = pokemon.stats[0].base_stat;
   document.getElementById('attack').textContent = pokemon.stats[1].base_stat;
   document.getElementById('defense').textContent = pokemon.stats[2].base_stat;
   document.getElementById('special-attack').textContent = pokemon.stats[3].base_stat;
   document.getElementById('special-defense').textContent = pokemon.stats[4].base_stat;
   document.getElementById('speed').textContent = pokemon.stats[5].base_stat;
-  document.getElementById('height').textContent = (pokemon.height/10).toFixed(1);
-  document.getElementById('weight').textContent = (pokemon.weight/10).toFixed(1);
   
-  setBackground(pokemon.types, popup, true);
+  // evolution
   getEvolutionChain(pokemon.id);
+
+  // set background colors of types
+  let primaryTypes = document.getElementsByClassName('popup-primary-type');
+  let secondaryTypes = document.getElementsByClassName('popup-secondary-type');
+ 
+  primaryTypes[primaryTypes.length - 1].style.background = colors[pokemon.types[0].type.name];
+  primaryTypes[primaryTypes.length - 1].textContent = `${pokemon.types[0].type.name}`;
+  if (pokemon.types[1] !== undefined) {
+    // pokemon has a secondary type
+    secondaryTypes[secondaryTypes.length - 1].textContent = `${pokemon.types[1].type.name}`;
+    secondaryTypes[secondaryTypes.length - 1].style.display = 'block';
+    secondaryTypes[secondaryTypes.length - 1].style.background = colors[pokemon.types[1].type.name];
+  } else {
+    secondaryTypes[secondaryTypes.length - 1].style.display = 'none';
+  }
+
+  setBackground(pokemon.types, document.getElementById('popup'), true);
+  setBackground(pokemon.types, document.getElementsByClassName('basic-info')[0]);
 }
 
 function closePopup() {
@@ -245,6 +268,8 @@ function closePopup() {
   document.body.style.height = "auto";
 }
 
+// close popup if user clicks outside of popup
+// re-enable scroll
 window.onclick = function(event) {
   if (event.target == modal) {
     modal.style.display = 'none';
@@ -252,3 +277,29 @@ window.onclick = function(event) {
     document.body.style.height = "auto";
   }
 }
+
+// extra information sections
+// default information displayed is the about section
+document.getElementsByClassName('stats')[0].style.display = 'none';
+document.getElementsByClassName('evolutions')[0].style.display = 'none';
+
+// display about section
+document.getElementById('about').addEventListener('click', () => {
+  document.getElementsByClassName('about')[0].style.display = 'block';
+  document.getElementsByClassName('stats')[0].style.display = 'none';
+  document.getElementsByClassName('evolutions')[0].style.display = 'none';
+})
+
+// display stats section
+document.getElementById('stats').addEventListener('click', () => {
+  document.getElementsByClassName('stats')[0].style.display = 'block';
+  document.getElementsByClassName('about')[0].style.display = 'none';
+  document.getElementsByClassName('evolutions')[0].style.display = 'none';
+})
+
+// display evolutions sections
+document.getElementById('evolutions').addEventListener('click', () => {
+  document.getElementsByClassName('evolutions')[0].style.display = 'block';
+  document.getElementsByClassName('about')[0].style.display = 'none';
+  document.getElementsByClassName('stats')[0].style.display = 'none';
+})
