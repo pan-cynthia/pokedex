@@ -12,6 +12,7 @@ body {
   align-items: center;
 }
 
+/* ------------------ HEADER ------------------ */
 .header {
   display: flex;
   justify-content: center;
@@ -25,6 +26,7 @@ body {
   width: 60px;
 }
 
+/* ------------------ POKEMON CARD CONTAINER ------------------ */
 .pokedex {
   width: 100%;
   display: flex;
@@ -32,6 +34,8 @@ body {
   justify-content: center;
 }
 
+
+/* ------------------ POKEMON CARD ------------------ */
 .pokemon-card {
   display: flex;
   flex-direction: column;
@@ -62,6 +66,12 @@ body {
   align-items: center;
 }
 
+.name {
+  margin: 10px;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
 .id {
   background: rgba(255, 255, 255, 0.9);
   width: 50px;
@@ -71,12 +81,6 @@ body {
   justify-content: center;
   align-items: center;
   margin: 5px;
-}
-
-.name {
-  margin: 10px;
-  font-size: 1.4rem;
-  font-weight: 600;
 }
 
 .type {
@@ -104,7 +108,7 @@ body {
   padding: 5px;
 }
 
-/*-----------------------------Popup------------------------------*/
+/* ------------------ POPUP ------------------ */
 .modal {
   display: none;
   position: fixed;
@@ -117,13 +121,12 @@ body {
 }
 
 .popup {
-  background: white;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 90%;
-  height: 90%;
+  width: 80%;
+  height: 80%;
   border-radius: 15px;
   position: relative;
   top: 50%;
@@ -131,44 +134,52 @@ body {
   transform: translate(-50%, -50%);
 }
 
+/* popup close button */
 .far {
   font-size: 1.5rem;
   position: absolute;
-  top: 90px;
-  right: 230px;
+  top: 100px;
+  right: 175px;
   cursor: pointer;
   z-index: 5;
 }
 
-#popup-image {
+/* ------------------ POKEMON INFORMATION ------------------ */
+
+.details {
   background: white;
-  border-radius: 50%;
-}
-
-#popup-id {
-  background: rgba(255, 255, 255, 0.9);
-  width: 50px;
-  height: 30px;
-  border-radius: 15px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 5px;
-}
-
-#popup-name {
-  margin: 10px;
-  font-size: 1.4rem;
-  font-weight: 600;
-}
-
-#popup-type {
-  margin: 5px;
-  margin-bottom: 20px;
-  width: 100%;
-  display: flex;
-  justify-content: center;
+  border-radius: 25px;
+  width: 400px;
   text-align: center;
+}
+
+/* --- basic info/top half --- */
+
+.basic-info {
+  border-radius: 20px;
+  margin-bottom: 10px;
+  width: 400px;
+}
+
+.pokemon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  margin: 0 5px;
+}
+
+#name {
+  font-size: 2rem;
+}
+
+#id {
+  font-size: 1.7rem;
+}
+
+.popup-type {
+  display: flex;
+  margin-left: 15px;
 }
 
 .popup-primary-type {
@@ -187,22 +198,18 @@ body {
   padding: 5px;
 }
 
-.popup-info {
+/* --- extra info/bottom half --- */
 
+.extra-info {
+  background: lavender;
+  border-radius: 20px;
+  width: 400px;
 }
 
 .base-stat {
   display: flex;
   align-items: center;
   justify-content: space-between;
-}
-
-.extra-info {
-  display: flex;
-}
-
-.evolutions {
-  display: flex;
 }
 
 .evolution-img {
@@ -212,8 +219,30 @@ body {
   margin: 10px;
 }
 
-.fas {
-  position: relative;
-  top: 70px;
-  right: 0;
+
+/* --- options bar --- */
+.nav {
+  padding: 10px;
+  width: 80%;
+  margin: auto;
+}
+
+.nav ul li {
+  display: inline-block;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.nav ul li::after {
+  content: '';
+  width: 0%;
+  height: 2px;
+  background: black;
+  display: block;
+  margin: auto;
+  transition: 0.5s;
+}
+
+.nav ul li:hover::after {
+  width: 100%;
 }
