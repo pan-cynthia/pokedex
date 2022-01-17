@@ -179,23 +179,26 @@ const getEvolutionChain = async id => {
 
   } while (evolutionData != undefined && evolutionData.hasOwnProperty('evolves_to'));
 
-  // set evolutions
-  document.getElementById('evolution-1-name').textContent = '';
-  document.getElementById('evolution-2-name').textContent = '';
-  document.getElementById('evolution-3-name').textContent = '';
-  document.getElementById(`evolution-1-img`).style.display = 'none';
-  document.getElementById(`evolution-2-img`).style.display = 'none';
-  document.getElementById(`evolution-3-img`).style.display = 'none';
+  console.log(evolutionChain.length);
+
+  const evolutions = document.getElementsByClassName('evolutions')[0];
+
+  // clear all evolutions
+  document.querySelectorAll('.evolution').forEach(e => e.parentNode.removeChild(e));
 
   for (let j = 0; j < evolutionChain.length; ++j) {
-    document.getElementById(`evolution-${j+1}-name`).textContent = evolutionChain[j].species_name;
+    let evolution = document.createElement('div');
+    evolution.classList.add('evolution');
 
     const url = `http://pokeapi.co/api/v2/pokemon/${evolutionChain[j].species_name}/`;
     const response = await fetch(url);
     const pokemon = await response.json();
 
-    document.getElementById(`evolution-${j+1}-img`).src = pokemon.sprites.front_default;
-    document.getElementById(`evolution-${j+1}-img`).style.display = 'block';
+    evolution.innerHTML = `
+    <h3>${evolutionChain[j].species_name}</h3>
+    <img class="evolution-img" src=${pokemon.sprites.front_default}>
+    `;
+    evolutions.appendChild(evolution);
   }
 }
 
@@ -270,28 +273,40 @@ window.onclick = function(event) {
   }
 }
 
+// display section
+function displaySection(section) {
+  let evolutions = document.getElementsByClassName('evolutions')[0];
+  let about = document.getElementsByClassName('about')[0];
+  let stats = document.getElementsByClassName('stats')[0];
+
+  evolutions.style.display = 'none';
+  about.style.display = 'none';
+  stats.style.display = 'none';
+
+  if (section === 'evolutions') {
+    evolutions.style.display = 'flex';
+  } else if (section === 'about') {
+    about.style.display = 'block';
+  } else if (section === 'stats') {
+    stats.style.display = 'block';
+  }
+}
+
 // extra information sections
 // default information displayed is the about section
-document.getElementsByClassName('stats')[0].style.display = 'none';
-document.getElementsByClassName('evolutions')[0].style.display = 'none';
+displaySection('about');
 
 // display about section
 document.getElementById('about').addEventListener('click', () => {
-  document.getElementsByClassName('about')[0].style.display = 'block';
-  document.getElementsByClassName('stats')[0].style.display = 'none';
-  document.getElementsByClassName('evolutions')[0].style.display = 'none';
+  displaySection('about');
 })
 
 // display stats section
 document.getElementById('stats').addEventListener('click', () => {
-  document.getElementsByClassName('stats')[0].style.display = 'block';
-  document.getElementsByClassName('about')[0].style.display = 'none';
-  document.getElementsByClassName('evolutions')[0].style.display = 'none';
+  displaySection('stats');
 })
 
 // display evolutions sections
 document.getElementById('evolutions').addEventListener('click', () => {
-  document.getElementsByClassName('evolutions')[0].style.display = 'block';
-  document.getElementsByClassName('about')[0].style.display = 'none';
-  document.getElementsByClassName('stats')[0].style.display = 'none';
+  displaySection('evolutions');
 })
