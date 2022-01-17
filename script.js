@@ -179,31 +179,23 @@ const getEvolutionChain = async id => {
 
   } while (evolutionData != undefined && evolutionData.hasOwnProperty('evolves_to'));
 
-  console.log(evolutionChain);
-
   // set evolutions
-  if (evolutionChain.length === 1) {
-    // no evolutions, reset
-    document.getElementById('evolutions-header').textContent = '';
-      document.getElementById('evolution-1-name').textContent = '';
-      document.getElementById('evolution-2-name').textContent = '';
-      document.getElementById('evolution-3-name').textContent = '';
-      document.getElementById(`evolution-1-img`).src = '#';
-      document.getElementById(`evolution-2-img`).src = '#';
-      document.getElementById(`evolution-3-img`).src = '';
-      document.getElementsByClassName('fas')[0].style.display = 'none';
-      document.getElementsByClassName('fas')[1].style.display = 'none';
-  } else {
-    // at least one evolution
-    document.getElementById('evolutions-header').textContent = 'Evolutions';
-    for (let j = 0; j < evolutionChain.length; ++j) {
-      document.getElementById(`evolution-${j+1}-name`).textContent = evolutionChain[j].species_name;
+  document.getElementById('evolution-1-name').textContent = '';
+  document.getElementById('evolution-2-name').textContent = '';
+  document.getElementById('evolution-3-name').textContent = '';
+  document.getElementById(`evolution-1-img`).style.display = 'none';
+  document.getElementById(`evolution-2-img`).style.display = 'none';
+  document.getElementById(`evolution-3-img`).style.display = 'none';
 
-      const url = `http://pokeapi.co/api/v2/pokemon/${evolutionChain[j].species_name}/`;
-      const response = await fetch(url);
-      const pokemon = await response.json();
-      document.getElementById(`evolution-${j+1}-img`).src = pokemon.sprites.front_default;
-    }
+  for (let j = 0; j < evolutionChain.length; ++j) {
+    document.getElementById(`evolution-${j+1}-name`).textContent = evolutionChain[j].species_name;
+
+    const url = `http://pokeapi.co/api/v2/pokemon/${evolutionChain[j].species_name}/`;
+    const response = await fetch(url);
+    const pokemon = await response.json();
+
+    document.getElementById(`evolution-${j+1}-img`).src = pokemon.sprites.front_default;
+    document.getElementById(`evolution-${j+1}-img`).style.display = 'block';
   }
 }
 
