@@ -249,16 +249,21 @@ body {
 }
 
 .evolutions {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   text-align: center;
+  overflow: auto;
+  margin: 10px;
 }
 
 .evolution {
   margin: 10px;
+}
+
+.evolution:first-child {
+  margin-left: auto;
+}
+
+.evolution:last-child {
+  margin-right: auto;
 }
 
 .evolution-img {
