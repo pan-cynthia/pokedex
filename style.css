@@ -125,8 +125,8 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 80%;
-  height: 80%;
+  width: 90%;
+  height: 90%;
   border-radius: 15px;
   position: relative;
   top: 50%;
@@ -138,10 +138,10 @@ body {
 .far {
   font-size: 1.5rem;
   position: absolute;
-  top: 100px;
-  right: 175px;
+  top: 75px;
+  right: 110px;
   cursor: pointer;
-  z-index: 5;
+  z-index: 3;
 }
 
 /* ------------------ POKEMON INFORMATION ------------------ */
@@ -149,8 +149,9 @@ body {
 .details {
   background: white;
   border-radius: 25px;
-  width: 400px;
+  width: 500px;
   text-align: center;
+  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* --- basic info/top half --- */
@@ -158,7 +159,9 @@ body {
 .basic-info {
   border-radius: 20px;
   margin-bottom: 10px;
-  width: 400px;
+  width: 500px;
+  height: 290px;
+  position: relative;
 }
 
 .pokemon {
@@ -198,18 +201,50 @@ body {
   padding: 5px;
 }
 
+#image {
+  background: white;
+  border-radius: 50%;
+  margin: 20px 0;
+  padding: 10px;
+}
+
 /* --- extra info/bottom half --- */
 
 .extra-info {
-  background: lavender;
   border-radius: 20px;
-  width: 400px;
+  width: 500px;
+  height: 270px;
+  margin: auto;
+  margin-top: -50px;
+  position: relative;
+  background: white;
+}
+
+.height, .weight {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 25px;
+}
+
+.stats {
+  margin: 10px 25px;
 }
 
 .base-stat {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin: 5px 0;
+}
+
+.evolutions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.evolution {
+  display: inline-block;
 }
 
 .evolution-img {
@@ -217,20 +252,26 @@ body {
   border-radius: 50%;
   border: solid black 1px;
   margin: 10px;
+  padding: 10px;
+  width: 80px;
 }
 
+.fas {
+  background: lightyellow;
+}
 
 /* --- options bar --- */
 .nav {
   padding: 10px;
-  width: 80%;
-  margin: auto;
+  margin-bottom: 15px;
 }
 
 .nav ul li {
   display: inline-block;
   padding: 8px 12px;
   cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
 .nav ul li::after {
