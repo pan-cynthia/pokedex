@@ -69,7 +69,7 @@ function setBackground(types, pokemonCard, opacity = false) {
 
 const createPokemonCard = (pokemon) => {
   // extract metadata from pokemon json object
-  let {id, name, types, sprites} = pokemon;
+  let {id, name, types, sprites, height, weight, stats} = pokemon;
 
   // add leading zeros to id number if necessary
   (id < 10) ? id = '00' + id : (id < 100) ? id = '0' + id : id;
@@ -112,7 +112,7 @@ const createPokemonCard = (pokemon) => {
 
   // if user clicks on a specific pokemon card, display a popup with more info
   pokemonCard.addEventListener('click', () => {
-    displayInfo(pokemon);
+    displayInfo(id, name, types, sprites, height, weight, stats);
   })
 
   // hover effects
@@ -146,9 +146,17 @@ const fetchPokemon = async () => {
   }
 }
 
-const getEvolutionChain = async id => {
+const getDescription = async name => {
+  let url = `https://pokeapi.co/api/v2/pokemon-species/${name}/`;
+  let response = await fetch(url);
+  let data = await response.json();
+  let description = data.flavor_text_entries[1].flavor_text;
+  document.getElementById('description').textContent = description;
+}
+
+const getEvolutionChain = async name => {
   // get url of evolution chain for api call
-  let url = `https://pokeapi.co/api/v2/pokemon-species/${id}/`;
+  let url = `https://pokeapi.co/api/v2/pokemon-species/${name}/`;
   let response = await fetch(url);
   let data = await response.json();
 
@@ -206,7 +214,7 @@ fetchPokemon();
 
 let modal = document.getElementById('modal');
 
-function displayInfo(pokemon) {
+function displayInfo(id, name, types, sprites, height, weight, stats) {
   modal.style.display = 'block';
   
   // disable scroll when modal is open
@@ -214,47 +222,46 @@ function displayInfo(pokemon) {
   document.body.style.height = "100%";
 
   // default information displayed is the about section
-  document.getElementsByClassName('about')[0].style.display = 'block';
-  document.getElementsByClassName('stats')[0].style.display = 'none';
-  document.getElementsByClassName('evolutions')[0].style.display = 'none';
+  displaySection('about');
 
   // basic info
-  document.getElementById('name').textContent = pokemon.name;
-  document.getElementById('id').textContent = (pokemon.id < 10) ? '00' + pokemon.id : (pokemon.id < 100) ? '0' + pokemon.id : pokemon.id;
-  document.getElementById('image').src = pokemon.sprites.front_default;
+  document.getElementById('name').textContent = name;
+  document.getElementById('id').textContent = id;
+  document.getElementById('image').src = sprites.front_default;
 
   // about
-  document.getElementById('height').textContent = (pokemon.height/10).toFixed(1);
-  document.getElementById('weight').textContent = (pokemon.weight/10).toFixed(1);
+  getDescription(name);
+  document.getElementById('height').textContent = (height/10).toFixed(1);
+  document.getElementById('weight').textContent = (weight/10).toFixed(1);
 
   // stats
-  document.getElementById('hp').textContent = pokemon.stats[0].base_stat;
-  document.getElementById('attack').textContent = pokemon.stats[1].base_stat;
-  document.getElementById('defense').textContent = pokemon.stats[2].base_stat;
-  document.getElementById('special-attack').textContent = pokemon.stats[3].base_stat;
-  document.getElementById('special-defense').textContent = pokemon.stats[4].base_stat;
-  document.getElementById('speed').textContent = pokemon.stats[5].base_stat;
+  document.getElementById('hp').textContent = stats[0].base_stat;
+  document.getElementById('attack').textContent = stats[1].base_stat;
+  document.getElementById('defense').textContent = stats[2].base_stat;
+  document.getElementById('special-attack').textContent = stats[3].base_stat;
+  document.getElementById('special-defense').textContent = stats[4].base_stat;
+  document.getElementById('speed').textContent = stats[5].base_stat;
   
   // evolution
-  getEvolutionChain(pokemon.id);
+  getEvolutionChain(name);
 
   // set background colors of types
   let primaryTypes = document.getElementsByClassName('popup-primary-type');
   let secondaryTypes = document.getElementsByClassName('popup-secondary-type');
  
-  primaryTypes[primaryTypes.length - 1].style.background = colors[pokemon.types[0].type.name];
-  primaryTypes[primaryTypes.length - 1].textContent = `${pokemon.types[0].type.name}`;
-  if (pokemon.types[1] !== undefined) {
+  primaryTypes[primaryTypes.length - 1].style.background = colors[types[0].type.name];
+  primaryTypes[primaryTypes.length - 1].textContent = `${types[0].type.name}`;
+  if (types[1] !== undefined) {
     // pokemon has a secondary type
-    secondaryTypes[secondaryTypes.length - 1].textContent = `${pokemon.types[1].type.name}`;
+    secondaryTypes[secondaryTypes.length - 1].textContent = `${types[1].type.name}`;
     secondaryTypes[secondaryTypes.length - 1].style.display = 'block';
-    secondaryTypes[secondaryTypes.length - 1].style.background = colors[pokemon.types[1].type.name];
+    secondaryTypes[secondaryTypes.length - 1].style.background = colors[types[1].type.name];
   } else {
     secondaryTypes[secondaryTypes.length - 1].style.display = 'none';
   }
 
-  setBackground(pokemon.types, document.getElementById('popup'), true);
-  setBackground(pokemon.types, document.getElementsByClassName('basic-info')[0]);
+  setBackground(types, document.getElementById('popup'), true);
+  setBackground(types, document.getElementsByClassName('basic-info')[0]);
 }
 
 function closePopup() {
@@ -286,7 +293,7 @@ function displaySection(section) {
   if (section === 'evolutions') {
     evolutions.style.display = 'flex';
   } else if (section === 'about') {
-    about.style.display = 'block';
+    about.style.display = 'flex';
   } else if (section === 'stats') {
     stats.style.display = 'block';
   }
@@ -306,7 +313,7 @@ document.getElementById('stats').addEventListener('click', () => {
   displaySection('stats');
 })
 
-// display evolutions sections
+// display evolutions section
 document.getElementById('evolutions').addEventListener('click', () => {
   displaySection('evolutions');
 })

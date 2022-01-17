@@ -151,7 +151,6 @@ body {
   background: white;
   border-radius: 25px;
   width: 500px;
-  text-align: center;
   box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.2);
 }
 
@@ -163,6 +162,7 @@ body {
   width: 500px;
   height: 290px;
   position: relative;
+  text-align: center;
 }
 
 .pokemon {
@@ -215,20 +215,30 @@ body {
   border-radius: 20px;
   width: 500px;
   height: 270px;
-  margin: auto;
   margin-top: -50px;
   position: relative;
   background: white;
 }
 
+.about {
+  display: flex;
+  flex-direction: column;
+  margin: 0 20px;
+}
+
+.description {
+  margin: 5px;
+  margin-bottom: 20px;
+}
+
 .height, .weight {
+  margin: 5px;
   display: flex;
   justify-content: space-between;
-  margin: 10px 25px;
 }
 
 .stats {
-  margin: 10px 25px;
+  margin: 0 25px;
 }
 
 .base-stat {
@@ -244,6 +254,7 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  text-align: center;
 }
 
 .evolution {
@@ -262,7 +273,6 @@ body {
 /* --- options bar --- */
 .nav {
   padding: 10px;
-  margin-bottom: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
