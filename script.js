@@ -93,7 +93,7 @@ const createPokemonCard = (pokemon) => {
   `;
 
   // set background color of the pokemon card
-  setBackground(pokemon.types, pokemonCard);
+  setBackground(types, pokemonCard);
 
   // add the pokemon card into the pokemon container element
   pokedex.appendChild(pokemonCard);
@@ -123,7 +123,7 @@ const createPokemonCard = (pokemon) => {
   })
 
   pokemonCard.addEventListener('mouseout', () => {
-    setBackground(pokemon.types, pokemonCard);
+    setBackground(types, pokemonCard);
     primaryTypes[id - 1].style.background = colors[types[0].type.name];
     if (types[1] !== undefined) {
       secondaryTypes[id - 1].style.background = colors[types[1].type.name];
@@ -154,7 +154,7 @@ const getDescription = async name => {
   document.getElementById('description').textContent = description;
 }
 
-const getEvolutionChain = async name => {
+const getEvolutionChain = async (name) => {
   // get url of evolution chain for api call
   let url = `https://pokeapi.co/api/v2/pokemon-species/${name}/`;
   let response = await fetch(url);
@@ -187,8 +187,6 @@ const getEvolutionChain = async name => {
 
   } while (evolutionData != undefined && evolutionData.hasOwnProperty('evolves_to'));
 
-  console.log(evolutionChain.length);
-
   const evolutions = document.getElementsByClassName('evolutions')[0];
 
   // clear all evolutions
@@ -206,6 +204,7 @@ const getEvolutionChain = async name => {
     <h3>${evolutionChain[j].species_name}</h3>
     <img class="evolution-img" src=${pokemon.sprites.front_default}>
     `;
+
     evolutions.appendChild(evolution);
   }
 }
